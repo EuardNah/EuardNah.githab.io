@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="main.css">
+    <title>ReactJS</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="exemple"></div>
+    <script type="text/babel">
+  class NewTas extends React.Component{
+   
+  
+  
+    render(){
+    let style = {backgroundColor:this.props.color};
+      return (<div className="task">
+        <div style={style} className="text">{this.props.children}</div>
+        <button onClick={this.props.edit} className="btn light">EDIT</button>
+        </div>);
+    }
+  }
+  class NotTxt extends React.Component{
+    constructor(props){
+    super(props);
+    this.state = {
+    text:"",
+    };
+  };
+  handleChange = (event) => {
+    this.setState({text:event.target.valu});
+  };
+   
+  
+
+    render(){
+      return (
+          <div className="box2">
+            <textarea 
+            className="txt"
+            placeholder="Enter new task"
+             value={this.state.text}
+             onChange={this.handleChange} />
+            
+          </div>
+      );
+    }
+  }
+  
+
+  class Block extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+    edit:false,
+    tasks2:[{
+                id:0,
+                text:"New Task",
+                color:"#F4A67F"
+              }
+      ]
+    };
+  };
+  
+  edit = () => {
+    this.setState({edit:true});
+  };
+  remove = () => {
+    this.props.deleteBlock(this.props.index);
+  };
+  updateText = (text,id) =>{
+    let arr = this.state.tasks2;
+    arr[id] = text ;
+    this.setState ({tasks2:arr});
+    console.log(arr);
+    
+    
+  };
+  save = () => {
+    this.updateText(this.refs.newTxt.value,this.NewTas);
+    this.setState({edit:false});
+    console.log(this.refs.newTxt.value);
+   
+  };
+  
+  handleNoteAdd = (newNote) =>{
+    let newNotes  = this.state.tasks2.slice();
+    newNotes.unshift(newNote);
+    this.setState ({tasks2:newNotes});
+  };
+   newTask = () =>{
+    let newNote = {
+                text:"New Task",
+                color:'#EEBEBE',
+                id:Date.now()
+                };
+      this.handleNoteAdd(newNote);
+  };
+  newTass = (task) =>{
+    return (<NewTas ref="newTas" key={task.id} index={task.id} onNoteAdd={this.handleNoteAdd} color={task.color} edit={this.edit} >{task.text}</NewTas>     );
+            };
+
+  
+    rendNorm = () => {
+      return(
+        <div className="box">
+            {this.state.tasks2.map(this.newTass)}
+            
+            <button onClick={this.remove} className="btn red">DELET</button>
+            <button className="btn grin" onClick={this.newTask} >New Task</button>
+        </div>
+      
+      );
+    };
+
+    rendEdit = () =>{
+      return(
+      <div >
+        <NotTxt ref="newTxt" update={this.updateText} defaultValue={this.props.children}  onNoteAdd= {this.handleNoteAdd} />
+        <button onClick={this.save} className="btn success">Save</button>
+      </div>
+      );
+    };
+
+  render() {
+    if(this.state.edit){
+      return this.rendEdit();
+    } else {
+        return this.rendNorm(); 
+    }
+  }
+}
+
+
+
+class Field extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      tasks:[]
+      
+    };
+  };
+  
+  
+
+  add = (text) => {
+    var arr = this.state.tasks;
+    arr.push (text);
+    this.setState({tasks:arr});
+  };
+
+  deleteBlock = (i) =>{
+    var arr = this.state.tasks;
+    arr.splice (i,1);
+    this.setState ({tasks:arr});
+  };
+
+  
+
+
+  
+
+  eachTask = (item,i) =>{
+      return(
+        <Block  key={i} index={i}  deleteBlock={this.deleteBlock} newCheng={this.newCheng} >
+          {item}
+        </Block>
+      );
+  };
+  render(){
+    return(
+      <div className="field">
+        <button onClick={this.add.bind(null,"New Task")} className="btn new">New Board</button>
+        {this.state.tasks.map(this.eachTask)}
+        
+
+      </div>
+    );
+  }
+}
+const place = document.getElementById("exemple");
+
+ReactDOM.render(<Field />,place);
+
+    </script>
+
+  </body>
+</html>
